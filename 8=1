@@ -1,0 +1,41 @@
+function enviarCorreos() {
+  var ui = SpreadsheetApp.getUi();
+  var response = ui.alert('Confirmación', '¿Está seguro de que desea enviar los correos?', ui.ButtonSet.YES_NO);
+
+  if (response == ui.Button.YES) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = sheet.getDataRange().getValues();
+    var subject = "Codigo de actividades 8 = 1";
+
+    for (var i = 1; i < data.length; i++) { // Comienza en 1 para omitir la fila de cabecera
+      var codigo = data[i][1];
+      var correo = data[i][3];
+
+      var message = `
+        <html>
+          <body style="font-family: Arial, sans-serif; color: #333;">
+            <h2>Estimado(a) Participante,</h2>
+            <p>Nos complace informarle que el código para sus actividades es:</p>
+            <p style="font-size: 18px; font-weight: bold; color: #007BFF;">${codigo}</p>
+            <p>Para dar de alta su código, por favor ingrese a la siguiente página:</p>
+            <p><a href="http://proyectosfcqi.tij.uabc.mx/eventos/login2.php" style="color: #007BFF;">http://proyectosfcqi.tij.uabc.mx/eventos/login2.php</a></p>
+            <p>En esta página, podrá validar su código y completar el proceso.</p>
+            <p>Gracias por su atención.</p>
+            <br>
+            <p>Saludos cordiales,</p>
+            <p>El equipo de actividades</p>
+          </body>
+        </html>
+      `;
+      MailApp.sendEmail({
+        to: correo,
+        subject: subject,
+        htmlBody: message
+      });
+    }
+    
+    ui.alert("Correos enviados con éxito.");
+  } else {
+    ui.alert("Operación cancelada.");
+  }
+}
